@@ -1,0 +1,101 @@
+---
+title: "DDRL"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+country_codes <- 
+  read_xlsx("data/country_codes.xlsx")
+  
+wvs <- 
+  readRDS("data/WVS_TimeSeries_R_v1_2")
+  
+
+wvs_new <- 
+  wvs %>% 
+  select(
+    wave = S002,
+    country_code = S003, 
+    year = S025, 
+    weight = S019, 
+    gender = X001, 
+    birth_year = X002, 
+    education = X025, 
+    employment = X028, 
+    income = X045, 
+    dem_imp = E235, 
+    dem_political_sys = E117 
+  ) %>% 
+  left_join(country_codes, by = c("country_code" = "code")) %>% 
+  mutate(
+    year = as.integer(str_sub(as.character(year), start = -4L, end = -1L)), 
+    gender = as.character(gender), 
+    gender = 
+      recode(
+        gender, 
+        "1" = "Male", 
+        "2" = "Female", 
+        .default = NA_character_
+      ), 
+    education = replace(education, education %in% c(-4, -5, -1, -2), NA_integer_), 
+    education = replace(education, education == -3, 0),
+    birth_year = replace(birth_year, birth_year %in% c(-1, -2, -3, -4, -5), NA_integer_), 
+    employment = 
+      case_when(
+        employment == 1 ~ "Full time",
+        employment == 2 ~ "Part time", 
+        employment == 3 ~ "Self Employed", 
+        employment == 4 ~ "Retired", 
+        employment == 5 ~ "Housewife", 
+        employment == 6 ~ "Student", 
+        employment == 7 ~ "Unemployed", 
+        employment == 8 ~ "Other" 
+      ), 
+    income = 
+      case_when(
+        income == 1 ~ "Upper class",
+        income == 2 ~ "Upper middle class", 
+        income == 3 ~ "Lower middle class", 
+        income == 4 ~ "Working class", 
+        income == 5 ~ "Lower class"
+      ), 
+    education = 
+      case_when(
+        education == 0 ~ "No formal education", 
+        education == 1 ~ "Incomplete elementary", 
+        education == 2 ~ "Complete elementary", 
+        education == 3 ~ "Incomplete secondary", 
+        education == 4 ~ "Complete secondary", 
+        education == 5 ~ "Incomplete secondary", 
+        education == 6 ~ "Complete secondary", 
+        education == 7 ~ "Some higher education",
+        education == 8 ~ "Higher education"
+      ), 
+    dem_imp = as.integer(dem_imp),
+    dem_imp = 
+      replace(dem_imp, dem_imp %in% c(-1, -2, -3, -4, -5), NA_integer_) %>% 
+      scales::rescale(to = c(-1, 1)),
+    dem_political_sys = as.integer(dem_political_sys),
+    dem_political_sys = 
+      replace(dem_political_sys, dem_political_sys %in% c(-1, -2, -3, -4, -5), NA_integer_) %>% 
+      scales::rescale(to = c(1, -1))
+  ) %>% 
+  mutate(
+    dem_overall = 
+      rowMeans(select(., starts_with("dem")), na.rm = TRUE) %>% 
+      round(digits = 2) %>% na_if("NaN") 
+  ) %>% 
+  filter(!is.na(country)) %>% 
+  left_join(read_xls("data/country_regions.xls"), by = "country") %>% 
+  write_csv("data/wvs_cleaned.csv")
+
+```
+
+

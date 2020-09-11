@@ -86,8 +86,6 @@ wvs %>%
     ## #   sub_region <int>, age <int>, ranking <int>
 
 ``` r
-#png("dem_hist.png", width = 8, height = 5, units = "in", res = 300)
-
 wvs %>% 
   ggplot(aes(dem_overall)) + 
   geom_histogram(bins = 20) + 
@@ -106,12 +104,7 @@ wvs %>%
 ![](data_analysis_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
 ###BY Country 
-#png("all_countries.png", width = 8, height = 9, units = "in", res = 300)
 
 wvs %>% 
   filter(wave == 6) %>% 
@@ -143,12 +136,7 @@ wvs %>%
 ![](data_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
 ###BY Region
-#png("dem_regions.png", width = 8, height = 5, units = "in", res = 300)
 
 wvs %>% 
   filter(wave == 6) %>% 
@@ -179,8 +167,6 @@ wvs %>%
 ![](data_analysis_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-#dev.off()
-
 wvs %>% 
   filter(wave == 6) %>% 
   group_by(country, region) %>% 
@@ -194,25 +180,25 @@ wvs %>%
     ## # Groups:   country [19]
     ##    country     region                dem_overall
     ##    <chr>       <chr>                       <dbl>
-    ##  1 Armenia     Europe & Central Asia        5.29
-    ##  2 Azerbaijan  Europe & Central Asia        5.11
-    ##  3 Belarus     Europe & Central Asia        4.67
-    ##  4 Cyprus      Europe & Central Asia        5.29
-    ##  5 Estonia     Europe & Central Asia        5.24
-    ##  6 Georgia     Europe & Central Asia        5.44
-    ##  7 Germany     Europe & Central Asia        5.18
-    ##  8 Kazakhstan  Europe & Central Asia        5.18
-    ##  9 Kyrgyzstan  Europe & Central Asia        4.98
-    ## 10 Netherlands Europe & Central Asia        5.51
-    ## 11 Poland      Europe & Central Asia        5.58
-    ## 12 Romania     Europe & Central Asia        5.28
-    ## 13 Russia      Europe & Central Asia        4.92
-    ## 14 Slovenia    Europe & Central Asia        5.27
-    ## 15 Spain       Europe & Central Asia        5.15
-    ## 16 Sweden      Europe & Central Asia        5.38
-    ## 17 Turkey      Europe & Central Asia        5.29
-    ## 18 Ukraine     Europe & Central Asia        4.84
-    ## 19 Uzbekistan  Europe & Central Asia        5.43
+    ##  1 Armenia     Europe & Central Asia       0.659
+    ##  2 Azerbaijan  Europe & Central Asia       0.486
+    ##  3 Belarus     Europe & Central Asia       0.437
+    ##  4 Cyprus      Europe & Central Asia       0.800
+    ##  5 Estonia     Europe & Central Asia       0.521
+    ##  6 Georgia     Europe & Central Asia       0.655
+    ##  7 Germany     Europe & Central Asia       0.744
+    ##  8 Kazakhstan  Europe & Central Asia       0.605
+    ##  9 Kyrgyzstan  Europe & Central Asia       0.409
+    ## 10 Netherlands Europe & Central Asia       0.642
+    ## 11 Poland      Europe & Central Asia       0.532
+    ## 12 Romania     Europe & Central Asia       0.607
+    ## 13 Russia      Europe & Central Asia       0.368
+    ## 14 Slovenia    Europe & Central Asia       0.488
+    ## 15 Spain       Europe & Central Asia       0.700
+    ## 16 Sweden      Europe & Central Asia       0.805
+    ## 17 Turkey      Europe & Central Asia       0.639
+    ## 18 Ukraine     Europe & Central Asia       0.475
+    ## 19 Uzbekistan  Europe & Central Asia       0.743
 
 ``` r
 gdp <- 
@@ -220,7 +206,6 @@ gdp <-
   gather(key = year, value = gdp_pc, -country) %>% 
   mutate(year = as.integer(str_remove(year, "pc_")))
 
-#png("dem_gdp.png", width = 7, height = 7, units = "in", res = 300)
 
 wvs %>% 
   filter(wave == 6) %>% 
@@ -256,10 +241,6 @@ wvs %>%
 ![](data_analysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
 world <- 
   wvs %>% 
   group_by(wave, country) %>% 
@@ -273,8 +254,6 @@ world <-
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
-#png("dem_region_time.png", width = 7, height = 7, units = "in", res = 300)
-
 wvs %>% 
   group_by(wave, country, region) %>% 
   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
@@ -290,7 +269,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy (1994-2016) by Region",
+    title = "Attitudes towards Democracy (1994-2020) by Region",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   ) + 
@@ -306,12 +285,6 @@ wvs %>%
 ![](data_analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-#png("Europe.png", width = 7, height = 5, units = "in", res = 300)
-
 wvs %>% 
   group_by(wave, country, region, sub_region) %>% 
   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
@@ -334,7 +307,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy in Europe & Central Asia (1994-2016)",
+    title = "Attitudes towards Democracy in Europe & Central Asia (1994-2020)",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   ) + 
@@ -350,163 +323,33 @@ wvs %>%
 ![](data_analysis_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-# wvs %>% 
-#   filter(
-#     region == "Europe & Central Asia", 
-#     sub_region == "Northern Europe"
-#     ) %>% 
-#   group_by(wave, country) %>% 
-#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-#   ggplot(aes(wave, dem_overall, color = country)) + 
-#   geom_line()
+# four_wave_countries <- 
+#   wvs %>% 
+#   count(wave, country) %>% 
+#   count(country, sort = TRUE) %>% 
+#   filter(n > 3) %>% 
+#   pull(country)
 # 
-# wvs %>% 
-#   filter(
-#     region == "Europe & Central Asia", 
-#     sub_region == "Central Asia"
-#     ) %>% 
-#   group_by(wave, country) %>% 
-#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-#   ggplot(aes(wave, dem_overall, color = country)) + 
-#   geom_line()
 # 
-# wvs %>% 
-#   filter(
-#     region == "Europe & Central Asia", 
-#     sub_region == "Eastern Europe"
-#     ) %>% 
-#   group_by(wave, country) %>% 
-#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-#   ggplot(aes(wave, dem_overall, color = country)) + 
-#   geom_line()
-# 
-# wvs %>% 
-#   filter(
-#     region == "Europe & Central Asia", 
-#     sub_region == "Central Asia"
-#     ) %>% 
-#   group_by(wave, country) %>% 
-#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-#   ggplot(aes(wave, dem_overall, color = country)) + 
-#   geom_line()
-```
-
-``` r
-four_wave_countries <- 
-  wvs %>% 
-  count(wave, country) %>% 
-  count(country, sort = TRUE) %>% 
-  filter(n > 3) %>% 
-  pull(country)
-```
-
-    ## Using `n` as weighting variable
-    ## ℹ Quiet this message with `wt = n` or count rows with `wt = 1`
-
-``` r
-#png("Select.png", width = 7, height = 5, units = "in", res = 300)
-wvs %>% 
-  filter(country %in% four_wave_countries) %>% 
-  group_by(wave, country, region) %>% 
-  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-  ggplot(aes(wave, dem_overall)) + 
-  geom_line(data = world, color = "gray80", size = 1) +
-  geom_line() + 
-  facet_wrap(vars(country)) + 
-  labs(
-    x = "Wave", 
-    y = "Score", 
-    title = "Attitudes towards Democracy in select countries (1994-2016)",
-    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-    caption = "Source: World Values Survey"
-  ) + 
-  theme_minimal() + 
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold")
-  ) 
-```
-
-    ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
-
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-    ## geom_path: Each group consists of only one observation. Do you need to adjust
-    ## the group aesthetic?
-
-![](data_analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
-
-``` r
-#dev.off()
-```
-
-``` r
 # wvs %>% 
 #   filter(country %in% four_wave_countries) %>% 
-#   group_by(country, region, year, wave) %>% 
-#   summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-#   left_join(
-#     gdp, by = c("country", "year")
-#   ) %>% 
-#   ungroup() %>% 
-#   mutate(country  = fct_reorder(country, year)) %>% 
-#   ggplot(aes(gdp_pc, dem_overall, color = country)) + 
+#   group_by(wave, country, region) %>% 
+#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+#   ggplot(aes(wave, dem_overall)) + 
+#   geom_line(data = world, color = "gray80", size = 1) +
 #   geom_line() + 
-#   geom_point(data = . %>% filter(wave == 3)) + 
-#   scale_x_log10() 
+#   facet_wrap(vars(country)) + 
+#   labs(
+#     x = "Wave", 
+#     y = "Score", 
+#     title = "Attitudes towards Democracy in select countries (1994-2020)",
+#     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+#     caption = "Source: World Values Survey"
+#   ) + 
+#   theme_minimal() + 
+#   theme(
+#     plot.title = element_text(hjust = 0.5, face = "bold")
+#   ) 
 ```
 
 ``` r
@@ -523,24 +366,24 @@ summary(fit_1)
     ## lm(formula = dem_overall ~ education, data = wvs_6)
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.2524 -0.6069  0.2476  0.4760  5.0173 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -1.64035 -0.23228  0.08772  0.35965  0.47183 
     ## 
     ## Coefficients:
     ##                                Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                     4.98267    0.01841 270.647  < 2e-16 ***
-    ## educationComplete elementary    0.13880    0.02272   6.110 9.99e-10 ***
-    ## educationIncomplete secondary   0.04137    0.02149   1.925   0.0542 .  
-    ## educationComplete secondary     0.12425    0.01979   6.279 3.43e-10 ***
-    ## educationSome higher education  0.18258    0.02429   7.518 5.64e-14 ***
-    ## educationHigher education       0.26969    0.02115  12.748  < 2e-16 ***
+    ## (Intercept)                    0.528170   0.005798  91.096  < 2e-16 ***
+    ## educationComplete elementary   0.054106   0.007154   7.563 3.99e-14 ***
+    ## educationIncomplete secondary  0.016678   0.006768   2.464   0.0137 *  
+    ## educationComplete secondary    0.034113   0.006232   5.474 4.42e-08 ***
+    ## educationSome higher education 0.072722   0.007649   9.508  < 2e-16 ***
+    ## educationHigher education      0.112183   0.006662  16.838  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.297 on 82274 degrees of freedom
+    ## Residual standard error: 0.4084 on 82274 degrees of freedom
     ##   (5855 observations deleted due to missingness)
-    ## Multiple R-squared:  0.003673,   Adjusted R-squared:  0.003613 
-    ## F-statistic: 60.67 on 5 and 82274 DF,  p-value: < 2.2e-16
+    ## Multiple R-squared:  0.007172,   Adjusted R-squared:  0.007111 
+    ## F-statistic: 118.9 on 5 and 82274 DF,  p-value: < 2.2e-16
 
 ``` r
 fit_2 <- lm(dem_overall ~ education + gender + age + employment + income, data = wvs_6)
@@ -553,37 +396,37 @@ summary(fit_2)
     ##     income, data = wvs_6)
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.4586 -0.5975  0.1923  0.4997  5.2700 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -1.71278 -0.22711  0.07189  0.35631  0.56137 
     ## 
     ## Coefficients:
     ##                                  Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                     4.6831271  0.0295812 158.314  < 2e-16 ***
-    ## educationComplete elementary    0.1375742  0.0230983   5.956 2.60e-09 ***
-    ## educationIncomplete secondary   0.0727596  0.0221906   3.279  0.00104 ** 
-    ## educationComplete secondary     0.1235819  0.0205690   6.008 1.88e-09 ***
-    ## educationSome higher education  0.1590619  0.0254964   6.239 4.44e-10 ***
-    ## educationHigher education       0.2063314  0.0225268   9.159  < 2e-16 ***
-    ## genderMale                     -0.0403968  0.0098351  -4.107 4.01e-05 ***
-    ## age                             0.0057124  0.0003777  15.123  < 2e-16 ***
-    ## employmentHousewife             0.0006555  0.0159886   0.041  0.96730    
-    ## employmentOther                -0.0359836  0.0375372  -0.959  0.33776    
-    ## employmentPart time            -0.0762657  0.0169490  -4.500 6.81e-06 ***
-    ## employmentRetired              -0.1073916  0.0184564  -5.819 5.96e-09 ***
-    ## employmentSelf Employed        -0.1054859  0.0156270  -6.750 1.49e-11 ***
-    ## employmentStudent              -0.0034655  0.0194877  -0.178  0.85886    
-    ## employmentUnemployed           -0.0093475  0.0174098  -0.537  0.59133    
-    ## incomeLower middle class        0.1395066  0.0159532   8.745  < 2e-16 ***
-    ## incomeUpper class               0.1861970  0.0350236   5.316 1.06e-07 ***
-    ## incomeUpper middle class        0.2492832  0.0176540  14.120  < 2e-16 ***
-    ## incomeWorking class             0.1072942  0.0163832   6.549 5.83e-11 ***
+    ## (Intercept)                     0.4227561  0.0093681  45.127  < 2e-16 ***
+    ## educationComplete elementary    0.0459719  0.0073150   6.285 3.31e-10 ***
+    ## educationIncomplete secondary   0.0220804  0.0070276   3.142  0.00168 ** 
+    ## educationComplete secondary     0.0305927  0.0065140   4.696 2.65e-06 ***
+    ## educationSome higher education  0.0556973  0.0080745   6.898 5.32e-12 ***
+    ## educationHigher education       0.0960856  0.0071340  13.469  < 2e-16 ***
+    ## genderMale                      0.0122138  0.0031147   3.921 8.81e-05 ***
+    ## age                             0.0014025  0.0001196  11.725  < 2e-16 ***
+    ## employmentHousewife             0.0080187  0.0050634   1.584  0.11328    
+    ## employmentOther                 0.0181858  0.0118877   1.530  0.12607    
+    ## employmentPart time            -0.0026714  0.0053676  -0.498  0.61870    
+    ## employmentRetired              -0.0031701  0.0058450  -0.542  0.58757    
+    ## employmentSelf Employed         0.0341170  0.0049489   6.894 5.47e-12 ***
+    ## employmentStudent               0.0435866  0.0061716   7.062 1.65e-12 ***
+    ## employmentUnemployed           -0.0093727  0.0055135  -1.700  0.08915 .  
+    ## incomeLower middle class        0.0611181  0.0050522  12.097  < 2e-16 ***
+    ## incomeUpper class               0.0131459  0.0110917   1.185  0.23594    
+    ## incomeUpper middle class        0.0592539  0.0055909  10.598  < 2e-16 ***
+    ## incomeWorking class             0.0411277  0.0051884   7.927 2.28e-15 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.266 on 77295 degrees of freedom
+    ## Residual standard error: 0.4009 on 77295 degrees of freedom
     ##   (10821 observations deleted due to missingness)
-    ## Multiple R-squared:  0.01077,    Adjusted R-squared:  0.01054 
-    ## F-statistic: 46.77 on 18 and 77295 DF,  p-value: < 2.2e-16
+    ## Multiple R-squared:  0.01204,    Adjusted R-squared:  0.01181 
+    ## F-statistic: 52.35 on 18 and 77295 DF,  p-value: < 2.2e-16
 
 ``` r
 fit_3 <- felm(dem_overall ~  education + gender + age + employment + income | country, data = wvs_6)
@@ -595,38 +438,38 @@ summary(fit_3)
     ##    felm(formula = dem_overall ~ education + gender + age + employment +      income | country, data = wvs_6) 
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -7.4995 -0.5281  0.1757  0.5726  5.3369 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -1.81875 -0.21282  0.07216  0.28908  0.71379 
     ## 
     ## Coefficients:
     ##                                  Estimate Std. Error t value Pr(>|t|)    
-    ## educationComplete elementary    0.1004877  0.0224060   4.485 7.31e-06 ***
-    ## educationIncomplete secondary   0.0518278  0.0216612   2.393 0.016729 *  
-    ## educationComplete secondary     0.1119875  0.0204242   5.483 4.19e-08 ***
-    ## educationSome higher education  0.1359524  0.0250068   5.437 5.45e-08 ***
-    ## educationHigher education       0.1723765  0.0223517   7.712 1.25e-14 ***
-    ## genderMale                     -0.0365743  0.0094404  -3.874 0.000107 ***
-    ## age                             0.0039739  0.0003756  10.580  < 2e-16 ***
-    ## employmentHousewife             0.0098534  0.0158908   0.620 0.535213    
-    ## employmentOther                 0.0147038  0.0362748   0.405 0.685225    
-    ## employmentPart time            -0.0263098  0.0162144  -1.623 0.104675    
-    ## employmentRetired              -0.0405160  0.0177046  -2.288 0.022115 *  
-    ## employmentSelf Employed         0.0207326  0.0156111   1.328 0.184159    
-    ## employmentStudent               0.0350228  0.0186423   1.879 0.060293 .  
-    ## employmentUnemployed            0.0074748  0.0169591   0.441 0.659391    
-    ## incomeLower middle class        0.0740026  0.0156271   4.736 2.19e-06 ***
-    ## incomeUpper class               0.0521845  0.0335679   1.555 0.120046    
-    ## incomeUpper middle class        0.0859552  0.0174380   4.929 8.27e-07 ***
-    ## incomeWorking class             0.0565762  0.0159221   3.553 0.000381 ***
+    ## educationComplete elementary    0.0365667  0.0072213   5.064 4.12e-07 ***
+    ## educationIncomplete secondary   0.0478602  0.0069812   6.856 7.16e-12 ***
+    ## educationComplete secondary     0.0776613  0.0065825  11.798  < 2e-16 ***
+    ## educationSome higher education  0.1137157  0.0080595  14.110  < 2e-16 ***
+    ## educationHigher education       0.1501008  0.0072038  20.836  < 2e-16 ***
+    ## genderMale                      0.0094920  0.0030425   3.120 0.001811 ** 
+    ## age                             0.0020187  0.0001211  16.677  < 2e-16 ***
+    ## employmentHousewife            -0.0004367  0.0051215  -0.085 0.932052    
+    ## employmentOther                 0.0247689  0.0116910   2.119 0.034125 *  
+    ## employmentPart time            -0.0176455  0.0052257  -3.377 0.000734 ***
+    ## employmentRetired              -0.0089055  0.0057060  -1.561 0.118597    
+    ## employmentSelf Employed         0.0089585  0.0050313   1.781 0.074991 .  
+    ## employmentStudent               0.0285633  0.0060082   4.754 2.00e-06 ***
+    ## employmentUnemployed           -0.0145444  0.0054658  -2.661 0.007793 ** 
+    ## incomeLower middle class        0.0330276  0.0050365   6.558 5.50e-11 ***
+    ## incomeUpper class              -0.0091742  0.0108186  -0.848 0.396441    
+    ## incomeUpper middle class        0.0242290  0.0056201   4.311 1.63e-05 ***
+    ## incomeWorking class             0.0232650  0.0051315   4.534 5.80e-06 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.196 on 77238 degrees of freedom
+    ## Residual standard error: 0.3854 on 77238 degrees of freedom
     ##   (10821 observations deleted due to missingness)
-    ## Multiple R-squared(full model): 0.1181   Adjusted R-squared: 0.1172 
-    ## Multiple R-squared(proj model): 0.003552   Adjusted R-squared: 0.002584 
-    ## F-statistic(full model):137.8 on 75 and 77238 DF, p-value: < 2.2e-16 
-    ## F-statistic(proj model):  15.3 on 18 and 77238 DF, p-value: < 2.2e-16
+    ## Multiple R-squared(full model): 0.08776   Adjusted R-squared: 0.08688 
+    ## Multiple R-squared(proj model): 0.01505   Adjusted R-squared: 0.0141 
+    ## F-statistic(full model):99.08 on 75 and 77238 DF, p-value: < 2.2e-16 
+    ## F-statistic(proj model): 65.59 on 18 and 77238 DF, p-value: < 2.2e-16
 
 ``` r
 fit_4 <- felm(dem_overall ~  education + gender + age + employment + income | country + year, data = wvs)
@@ -638,42 +481,40 @@ summary(fit_4)
     ##    felm(formula = dem_overall ~ education + gender + age + employment +      income | country + year, data = wvs) 
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -7.4351 -0.5872  0.1041  0.4719  6.7702 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -1.91494 -0.23174  0.05511  0.32569  0.89565 
     ## 
     ## Coefficients:
     ##                                  Estimate Std. Error t value Pr(>|t|)    
-    ## educationComplete elementary    0.0080517  0.0098292   0.819 0.412698    
-    ## educationIncomplete secondary  -0.0319663  0.0097448  -3.280 0.001037 ** 
-    ## educationComplete secondary    -0.0253669  0.0092050  -2.756 0.005856 ** 
-    ## educationSome higher education -0.0597710  0.0117005  -5.108 3.25e-07 ***
-    ## educationHigher education      -0.0385938  0.0103545  -3.727 0.000194 ***
-    ## genderMale                     -0.0364984  0.0047240  -7.726 1.11e-14 ***
-    ## age                             0.0011610  0.0001896   6.124 9.15e-10 ***
-    ## employmentHousewife             0.0032423  0.0078838   0.411 0.680881    
-    ## employmentOther                 0.0149678  0.0166686   0.898 0.369204    
-    ## employmentPart time            -0.0187184  0.0084613  -2.212 0.026952 *  
-    ## employmentRetired              -0.0034177  0.0088313  -0.387 0.698758    
-    ## employmentSelf Employed         0.0198444  0.0076894   2.581 0.009859 ** 
-    ## employmentStudent               0.0114798  0.0091958   1.248 0.211897    
-    ## employmentUnemployed           -0.0087482  0.0080978  -1.080 0.280005    
-    ## incomeLower middle class       -0.0075974  0.0075736  -1.003 0.315799    
-    ## incomeUpper class               0.0095234  0.0176713   0.539 0.589943    
-    ## incomeUpper middle class       -0.0017042  0.0085469  -0.199 0.841955    
-    ## incomeWorking class            -0.0125069  0.0077645  -1.611 0.107231    
+    ## educationComplete elementary    0.0123183  0.0039507   3.118  0.00182 ** 
+    ## educationIncomplete secondary   0.0323111  0.0039168   8.249  < 2e-16 ***
+    ## educationComplete secondary     0.0643346  0.0036998  17.389  < 2e-16 ***
+    ## educationSome higher education  0.1109460  0.0047028  23.591  < 2e-16 ***
+    ## educationHigher education       0.1420427  0.0041618  34.130  < 2e-16 ***
+    ## genderMale                      0.0170950  0.0018987   9.003  < 2e-16 ***
+    ## age                             0.0018162  0.0000762  23.833  < 2e-16 ***
+    ## employmentHousewife            -0.0088156  0.0031688  -2.782  0.00540 ** 
+    ## employmentOther                 0.0079239  0.0066996   1.183  0.23691    
+    ## employmentPart time            -0.0109611  0.0034009  -3.223  0.00127 ** 
+    ## employmentRetired              -0.0141339  0.0035496  -3.982 6.84e-05 ***
+    ## employmentSelf Employed         0.0001445  0.0030906   0.047  0.96272    
+    ## employmentStudent               0.0297780  0.0036961   8.057 7.88e-16 ***
+    ## employmentUnemployed           -0.0130465  0.0032548  -4.008 6.12e-05 ***
+    ## incomeLower middle class        0.0339867  0.0030441  11.165  < 2e-16 ***
+    ## incomeUpper class               0.0090599  0.0071027   1.276  0.20211    
+    ## incomeUpper middle class        0.0322349  0.0034353   9.383  < 2e-16 ***
+    ## incomeWorking class             0.0243843  0.0031208   7.813 5.59e-15 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.038 on 236455 degrees of freedom
+    ## Residual standard error: 0.4171 on 236455 degrees of freedom
     ##   (113893 observations deleted due to missingness)
-    ## Multiple R-squared(full model): 0.7424   Adjusted R-squared: 0.7422 
-    ## Multiple R-squared(proj model): 0.001084   Adjusted R-squared: 0.0005564 
-    ## F-statistic(full model): 5451 on 125 and 236455 DF, p-value: < 2.2e-16 
-    ## F-statistic(proj model): 14.26 on 18 and 236455 DF, p-value: < 2.2e-16
+    ## Multiple R-squared(full model): 0.09451   Adjusted R-squared: 0.09404 
+    ## Multiple R-squared(proj model): 0.01478   Adjusted R-squared: 0.01426 
+    ## F-statistic(full model):197.4 on 125 and 236455 DF, p-value: < 2.2e-16 
+    ## F-statistic(proj model): 197.1 on 18 and 236455 DF, p-value: < 2.2e-16
 
 ``` r
-#png("education_level.png", width = 7, height = 7, units = "in", res = 300)
-
 wvs %>% 
   count(education) %>% 
   mutate(
@@ -705,14 +546,9 @@ wvs %>%
   ) 
 ```
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-#png("education_vs_income.png", width = 7, height = 5, units = "in", res = 300)
 wvs %>% 
   mutate(
     ranking = 
@@ -746,11 +582,9 @@ wvs %>%
   )
 ```
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
-#dev.off()
-
 wvs %>% 
   mutate(
     ranking = 
@@ -786,7 +620,6 @@ wvs %>%
     ## # … with 32 more rows
 
 ``` r
-#png("age_hist.png", width = 7, height = 5, units = "in", res = 300)
 wvs %>% 
   ggplot(aes(age)) + 
   geom_histogram(bins = 20) + 
@@ -802,15 +635,9 @@ wvs %>%
 
     ## Warning: Removed 3830 rows containing non-finite values (stat_bin).
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-#png("south_asia.png", width = 7, height = 5, units = "in", res = 300)
-
 wvs %>% 
   filter(region == "South Asia") %>% 
   group_by(wave, country, region) %>% 
@@ -821,7 +648,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy in South Asia (1994-2016) by Country",
+    title = "Attitudes towards Democracy in South Asia (1994-2020) by Country",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   )
@@ -829,15 +656,9 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-#png("n_america.png", width = 7, height = 5, units = "in", res = 300)
-
 wvs %>% 
   filter(region == "North America") %>% 
   group_by(wave, country, region) %>% 
@@ -855,7 +676,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy in North America (1994-2016) by Country",
+    title = "Attitudes towards Democracy in North America (1994-2020) by Country",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   )
@@ -863,15 +684,9 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-#png("Latin_america.png", width = 7, height = 5, units = "in", res = 300)
-
 wvs %>% 
   filter(region == "Latin America & Caribbean") %>% 
   group_by(wave, country, region) %>% 
@@ -884,7 +699,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy in Latin America (1994-2016) by Country",
+    title = "Attitudes towards Democracy in Latin America (1994-2020) by Country",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   )
@@ -892,15 +707,9 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-#png("E_asia.png", width = 7, height = 5, units = "in", res = 300)
-
 wvs %>% 
   filter(region == "East Asia & Pacific") %>% 
   group_by(wave, country, region) %>% 
@@ -913,7 +722,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy in East Asia & Pacific (1994-2016) by Country",
+    title = "Attitudes towards Democracy in East Asia & Pacific (1994-2020) by Country",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   )
@@ -921,15 +730,9 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
-#dev.off()
-```
-
-``` r
-#png("Africa.png", width = 7, height = 5, units = "in", res = 300)
-
 wvs %>% 
   filter(region == "Sub-Saharan Africa") %>% 
   group_by(wave, country, region) %>% 
@@ -942,7 +745,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy in Sub-Saharan Africa (1994-2016) by Country",
+    title = "Attitudes towards Democracy in Sub-Saharan Africa (1994-2020) by Country",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   )
@@ -950,11 +753,7 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
-
-``` r
-#dev.off()
-```
+![](data_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 \#\#\#India
 
@@ -966,7 +765,7 @@ wvs %>%
   geom_count()
 ```
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 wvs %>% 
@@ -980,11 +779,9 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'wave' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-19-2.png)<!-- -->
 
 ``` r
-#png("MENA.png", width = 7, height = 5, units = "in", res = 300)
-
 wvs %>% 
   filter(region == "Middle East & North Africa") %>% 
   group_by(wave, country, region) %>% 
@@ -997,7 +794,7 @@ wvs %>%
   labs(
     x = "Wave", 
     y = "Score", 
-    title = "Attitudes towards Democracy in MENA (1994-2016) by Country",
+    title = "Attitudes towards Democracy in MENA (1994-2020) by Country",
     subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
     caption = "Source: World Values Survey"
   )
@@ -1005,11 +802,7 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
-
-``` r
-#dev.off()
-```
+![](data_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 wvs %>% 
@@ -1022,7 +815,7 @@ wvs %>%
 
     ## `summarise()` regrouping output by 'year', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 ``` r
 wvs %>% 
@@ -1036,25 +829,16 @@ wvs %>%
 
     ## # A tibble: 60 x 3
     ## # Groups:   country [60]
-    ##    country   region                     dem_overall
-    ##    <chr>     <chr>                            <dbl>
-    ##  1 Haiti     Latin America & Caribbean         4.24
-    ##  2 Rwanda    Sub-Saharan Africa                4.60
-    ##  3 Nigeria   Sub-Saharan Africa                4.66
-    ##  4 Belarus   Europe & Central Asia             4.67
-    ##  5 Singapore East Asia & Pacific               4.71
-    ##  6 Palestine Middle East & North Africa        4.82
-    ##  7 Ghana     Sub-Saharan Africa                4.83
-    ##  8 Iraq      Middle East & North Africa        4.84
-    ##  9 Ukraine   Europe & Central Asia             4.84
-    ## 10 Thailand  East Asia & Pacific               4.87
+    ##    country      region                    dem_overall
+    ##    <chr>        <chr>                           <dbl>
+    ##  1 Haiti        Latin America & Caribbean       0.223
+    ##  2 Russia       Europe & Central Asia           0.368
+    ##  3 South Africa Sub-Saharan Africa              0.385
+    ##  4 Kyrgyzstan   Europe & Central Asia           0.409
+    ##  5 Belarus      Europe & Central Asia           0.437
+    ##  6 South Korea  East Asia & Pacific             0.443
+    ##  7 Hong Kong    East Asia & Pacific             0.444
+    ##  8 Philippines  East Asia & Pacific             0.460
+    ##  9 Pakistan     South Asia                      0.468
+    ## 10 Brazil       Latin America & Caribbean       0.472
     ## # … with 50 more rows
-
-\#\#\#Possible Research Questions - How people classify themselves as
-right or left, versus what their views actually are. - How has the idea
-of global citizenship changed over time - Attitudes towards democracy
-
-Impact of the fall of 2008. Maybe look at around that time.
-
-Events. Internal events. Relationship between economic growth and
-democracy
