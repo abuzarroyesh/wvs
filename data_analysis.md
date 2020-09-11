@@ -1,18 +1,25 @@
-    library(tidyverse)
+DDRL
+================
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+``` r
+library(tidyverse)
+```
+
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
     ## ✓ tibble  3.0.3     ✓ dplyr   1.0.0
     ## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.5.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
-    library(readxl)
-    library(lfe)
+``` r
+library(readxl)
+library(lfe)
+```
 
     ## Loading required package: Matrix
 
@@ -23,27 +30,29 @@
     ## 
     ##     expand, pack, unpack
 
-    wvs <- 
-      read_csv("data/wvs_cleaned.csv", guess_max = 300000) %>% 
-      select(-c(dem_imp, dem_political_sys)) %>% 
-      mutate(age = year - birth_year) %>% 
-      filter(
-        !is.na(dem_overall), 
-        country != "Channel Islands"
-        ) %>% 
-      mutate(
-        ranking = 
-          case_when(
-          education == "No formal education"  ~ 1,
-          education == "Incomplete elementary" ~ 2,
-          education == "Complete elementary" ~ 3,
-          education == "Incomplete secondary" ~ 4,
-          education == "Complete secondary" ~ 5,
-          education == "Some higher education"  ~ 6,
-          education == "Higher education"  ~ 7
-        ), 
-        education = fct_reorder(education, ranking)
-      )
+``` r
+wvs <- 
+  read_csv("data/wvs_cleaned.csv", guess_max = 300000) %>% 
+  select(-c(dem_imp, dem_political_sys)) %>% 
+  mutate(age = year - birth_year) %>% 
+  filter(
+    !is.na(dem_overall), 
+    country != "Channel Islands"
+    ) %>% 
+  mutate(
+    ranking = 
+      case_when(
+      education == "No formal education"  ~ 1,
+      education == "Incomplete elementary" ~ 2,
+      education == "Complete elementary" ~ 3,
+      education == "Incomplete secondary" ~ 4,
+      education == "Complete secondary" ~ 5,
+      education == "Some higher education"  ~ 6,
+      education == "Higher education"  ~ 7
+    ), 
+    education = fct_reorder(education, ranking)
+  )
+```
 
     ## Parsed with column specification:
     ## cols(
@@ -64,8 +73,10 @@
     ##   sub_region = col_character()
     ## )
 
-    wvs %>% 
-      summarise_all(~ sum(is.na(.))) 
+``` r
+wvs %>% 
+  summarise_all(~ sum(is.na(.))) 
+```
 
     ## # A tibble: 1 x 15
     ##    wave country_code  year weight gender birth_year education employment income
@@ -74,99 +85,108 @@
     ## # … with 6 more variables: country <int>, dem_overall <int>, region <int>,
     ## #   sub_region <int>, age <int>, ranking <int>
 
-    png("dem_hist.png", width = 8, height = 5, units = "in", res = 300)
+``` r
+#png("dem_hist.png", width = 8, height = 5, units = "in", res = 300)
 
-    wvs %>% 
-      ggplot(aes(dem_overall)) + 
-      geom_histogram(bins = 20) + 
-      labs(
-        x = "Attitudes towards Democracy", 
-        y = "Number", 
-        title = "Histogram of Attitudes towards Democracy", 
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      )
+wvs %>% 
+  ggplot(aes(dem_overall)) + 
+  geom_histogram(bins = 20) + 
+  labs(
+    x = "Attitudes towards Democracy", 
+    y = "Number", 
+    title = "Histogram of Attitudes towards Democracy", 
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    ###BY Country 
-    png("all_countries.png", width = 8, height = 9, units = "in", res = 300)
+``` r
+###BY Country 
+#png("all_countries.png", width = 8, height = 9, units = "in", res = 300)
 
-    wvs %>% 
-      filter(wave == 6) %>% 
-      group_by(country, region, year) %>% 
-      summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ungroup() %>% 
-      mutate(
-        country = fct_reorder(country, dem_overall),
-        year = as.factor(year)
-        ) %>% 
-      ggplot(aes(dem_overall, country)) + 
-      geom_point(aes(color = region)) +
-      geom_text(aes(label = year), nudge_x = 0.03, size = 3) +
-      scale_color_discrete(name = "Region") + 
-      labs(
-        x = "Attitudes towards Democracy", 
-        y = NULL, 
-        title = "Attitudes towards Democracy in Wave 6 by Country", 
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      )
+wvs %>% 
+  filter(wave == 6) %>% 
+  group_by(country, region, year) %>% 
+  summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(
+    country = fct_reorder(country, dem_overall),
+    year = as.factor(year)
+    ) %>% 
+  ggplot(aes(dem_overall, country)) + 
+  geom_point(aes(color = region)) +
+  geom_text(aes(label = year), nudge_x = 0.03, size = 3) +
+  scale_color_discrete(name = "Region") + 
+  labs(
+    x = "Attitudes towards Democracy", 
+    y = NULL, 
+    title = "Attitudes towards Democracy in Wave 6 by Country", 
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
 
     ## `summarise()` regrouping output by 'country', 'region' (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    ###BY Region
-    png("dem_regions.png", width = 8, height = 5, units = "in", res = 300)
+``` r
+###BY Region
+#png("dem_regions.png", width = 8, height = 5, units = "in", res = 300)
 
-    wvs %>% 
-      filter(wave == 6) %>% 
-      group_by(country, region) %>% 
-      summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      group_by(region) %>% 
-      summarize(dem_overall = mean(dem_overall, na.rm = TRUE)) %>% 
-      mutate(region = fct_reorder(region, dem_overall)) %>% 
-      ggplot(aes(dem_overall, region)) + 
-      geom_point() + 
-      labs(
-        x = "Attitudes towards Democracy", 
-        y = NULL, 
-        title = "Attitudes towards Democracy in Wave 6 by Region", 
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      ) + 
-      coord_cartesian(xlim = c(0.2, 0.9))
+wvs %>% 
+  filter(wave == 6) %>% 
+  group_by(country, region) %>% 
+  summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  group_by(region) %>% 
+  summarize(dem_overall = mean(dem_overall, na.rm = TRUE)) %>% 
+  mutate(region = fct_reorder(region, dem_overall)) %>% 
+  ggplot(aes(dem_overall, region)) + 
+  geom_point() + 
+  labs(
+    x = "Attitudes towards Democracy", 
+    y = NULL, 
+    title = "Attitudes towards Democracy in Wave 6 by Region", 
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  ) + 
+  coord_cartesian(xlim = c(0.2, 0.9))
+```
 
     ## `summarise()` regrouping output by 'country' (override with `.groups` argument)
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
 
-    wvs %>% 
-      filter(wave == 6) %>% 
-      group_by(country, region) %>% 
-      summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      filter(region == "Europe & Central Asia")
+wvs %>% 
+  filter(wave == 6) %>% 
+  group_by(country, region) %>% 
+  summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  filter(region == "Europe & Central Asia")
+```
 
     ## `summarise()` regrouping output by 'country' (override with `.groups` argument)
 
@@ -194,36 +214,38 @@
     ## 18 Ukraine     Europe & Central Asia        4.84
     ## 19 Uzbekistan  Europe & Central Asia        5.43
 
-    gdp <- 
-      read_xls("data/gdp_per_capita.xls") %>% 
-      gather(key = year, value = gdp_pc, -country) %>% 
-      mutate(year = as.integer(str_remove(year, "pc_")))
+``` r
+gdp <- 
+  read_xls("data/gdp_per_capita.xls") %>% 
+  gather(key = year, value = gdp_pc, -country) %>% 
+  mutate(year = as.integer(str_remove(year, "pc_")))
 
-    png("dem_gdp.png", width = 7, height = 7, units = "in", res = 300)
+#png("dem_gdp.png", width = 7, height = 7, units = "in", res = 300)
 
-    wvs %>% 
-      filter(wave == 6) %>% 
-      group_by(country, region, year) %>% 
-      summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      left_join(
-        gdp, by = c("country", "year")
-      ) %>% 
-      ggplot(aes(gdp_pc, dem_overall, color = region)) + 
-      geom_point() + 
-      ggrepel::geom_text_repel(aes(label = country), size = 3) + 
-      scale_color_discrete(name = NULL) + 
-      scale_x_log10() + 
-      labs(
-        x = "GDP per Capita", 
-        y = "Attitudes towards Democracy", 
-        title = "Attitudes towards Democracy vs GDP per Capita in Wave 6", 
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold"), 
-        legend.position = "bottom"
-      )
+wvs %>% 
+  filter(wave == 6) %>% 
+  group_by(country, region, year) %>% 
+  summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  left_join(
+    gdp, by = c("country", "year")
+  ) %>% 
+  ggplot(aes(gdp_pc, dem_overall, color = region)) + 
+  geom_point() + 
+  ggrepel::geom_text_repel(aes(label = country), size = 3) + 
+  scale_color_discrete(name = NULL) + 
+  scale_x_log10() + 
+  labs(
+    x = "GDP per Capita", 
+    y = "Attitudes towards Democracy", 
+    title = "Attitudes towards Democracy vs GDP per Capita in Wave 6", 
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"), 
+    legend.position = "bottom"
+  )
+```
 
     ## `summarise()` regrouping output by 'country', 'region' (override with `.groups` argument)
 
@@ -231,167 +253,182 @@
 
     ## Warning: Removed 1 rows containing missing values (geom_text_repel).
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    world <- 
-      wvs %>% 
-      group_by(wave, country) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      group_by(wave) %>% 
-      summarize(dem_overall = mean(dem_overall))
+``` r
+world <- 
+  wvs %>% 
+  group_by(wave, country) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  group_by(wave) %>% 
+  summarize(dem_overall = mean(dem_overall))
+```
 
     ## `summarise()` regrouping output by 'wave' (override with `.groups` argument)
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
-    png("dem_region_time.png", width = 7, height = 7, units = "in", res = 300)
+``` r
+#png("dem_region_time.png", width = 7, height = 7, units = "in", res = 300)
 
-    wvs %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      group_by(wave, region) %>% 
-      summarise(dem_overall = mean(dem_overall, na.rm = TRUE)) %>% 
-      ggplot(aes(wave, dem_overall)) + 
-      geom_line(data = world, color = "gray80", size = 1) +
-      geom_line() + #color = "#01babe"
-      facet_wrap(vars(region)) + 
-      scale_y_continuous(breaks = seq(0.2, 0.7, 0.1), minor_breaks = NULL) + 
-      scale_x_continuous(minor_breaks = NULL) + 
-      # theme_minimal() + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy (1994-2016) by Region",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      )
+wvs %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  group_by(wave, region) %>% 
+  summarise(dem_overall = mean(dem_overall, na.rm = TRUE)) %>% 
+  ggplot(aes(wave, dem_overall)) + 
+  geom_line(data = world, color = "gray80", size = 1) +
+  geom_line() + #color = "#01babe"
+  facet_wrap(vars(region)) + 
+  scale_y_continuous(breaks = seq(0.2, 0.7, 0.1), minor_breaks = NULL) + 
+  scale_x_continuous(minor_breaks = NULL) + 
+  # theme_minimal() + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy (1994-2016) by Region",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
     ## `summarise()` regrouping output by 'wave' (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    png("Europe.png", width = 7, height = 5, units = "in", res = 300)
+``` r
+#png("Europe.png", width = 7, height = 5, units = "in", res = 300)
 
-    wvs %>% 
-      group_by(wave, country, region, sub_region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      filter(region == "Europe & Central Asia") %>% 
-      group_by(wave, sub_region) %>% 
-      summarise(dem_overall = mean(dem_overall, na.rm = TRUE)) %>% 
-      ggplot(aes(wave, dem_overall, color = sub_region)) + 
-      geom_line() + 
-      geom_point(data = . %>% filter(wave == 3)) + 
-      ggrepel::geom_text_repel(
-        data = . %>% filter(wave == 3), 
-        aes(label = sub_region), 
-        hjust = 0, 
-        nudge_x = -1, 
-        nudge_y = 0
-      ) + 
-      coord_cartesian(xlim = c(2.4, 6)) + 
-      theme_minimal() + 
-      theme(legend.position = "none") +
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in Europe & Central Asia (1994-2016)",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      ) 
+wvs %>% 
+  group_by(wave, country, region, sub_region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  filter(region == "Europe & Central Asia") %>% 
+  group_by(wave, sub_region) %>% 
+  summarise(dem_overall = mean(dem_overall, na.rm = TRUE)) %>% 
+  ggplot(aes(wave, dem_overall, color = sub_region)) + 
+  geom_line() + 
+  geom_point(data = . %>% filter(wave == 3)) + 
+  ggrepel::geom_text_repel(
+    data = . %>% filter(wave == 3), 
+    aes(label = sub_region), 
+    hjust = 0, 
+    nudge_x = -1, 
+    nudge_y = 0
+  ) + 
+  coord_cartesian(xlim = c(2.4, 6)) + 
+  theme_minimal() + 
+  theme(legend.position = "none") +
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in Europe & Central Asia (1994-2016)",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  ) 
+```
 
     ## `summarise()` regrouping output by 'wave', 'country', 'region' (override with `.groups` argument)
 
     ## `summarise()` regrouping output by 'wave' (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    # wvs %>% 
-    #   filter(
-    #     region == "Europe & Central Asia", 
-    #     sub_region == "Northern Europe"
-    #     ) %>% 
-    #   group_by(wave, country) %>% 
-    #   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-    #   ggplot(aes(wave, dem_overall, color = country)) + 
-    #   geom_line()
-    # 
-    # wvs %>% 
-    #   filter(
-    #     region == "Europe & Central Asia", 
-    #     sub_region == "Central Asia"
-    #     ) %>% 
-    #   group_by(wave, country) %>% 
-    #   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-    #   ggplot(aes(wave, dem_overall, color = country)) + 
-    #   geom_line()
-    # 
-    # wvs %>% 
-    #   filter(
-    #     region == "Europe & Central Asia", 
-    #     sub_region == "Eastern Europe"
-    #     ) %>% 
-    #   group_by(wave, country) %>% 
-    #   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-    #   ggplot(aes(wave, dem_overall, color = country)) + 
-    #   geom_line()
-    # 
-    # wvs %>% 
-    #   filter(
-    #     region == "Europe & Central Asia", 
-    #     sub_region == "Central Asia"
-    #     ) %>% 
-    #   group_by(wave, country) %>% 
-    #   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-    #   ggplot(aes(wave, dem_overall, color = country)) + 
-    #   geom_line()
+``` r
+# wvs %>% 
+#   filter(
+#     region == "Europe & Central Asia", 
+#     sub_region == "Northern Europe"
+#     ) %>% 
+#   group_by(wave, country) %>% 
+#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+#   ggplot(aes(wave, dem_overall, color = country)) + 
+#   geom_line()
+# 
+# wvs %>% 
+#   filter(
+#     region == "Europe & Central Asia", 
+#     sub_region == "Central Asia"
+#     ) %>% 
+#   group_by(wave, country) %>% 
+#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+#   ggplot(aes(wave, dem_overall, color = country)) + 
+#   geom_line()
+# 
+# wvs %>% 
+#   filter(
+#     region == "Europe & Central Asia", 
+#     sub_region == "Eastern Europe"
+#     ) %>% 
+#   group_by(wave, country) %>% 
+#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+#   ggplot(aes(wave, dem_overall, color = country)) + 
+#   geom_line()
+# 
+# wvs %>% 
+#   filter(
+#     region == "Europe & Central Asia", 
+#     sub_region == "Central Asia"
+#     ) %>% 
+#   group_by(wave, country) %>% 
+#   summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+#   ggplot(aes(wave, dem_overall, color = country)) + 
+#   geom_line()
+```
 
-    four_wave_countries <- 
-      wvs %>% 
-      count(wave, country) %>% 
-      count(country, sort = TRUE) %>% 
-      filter(n > 3) %>% 
-      pull(country)
+``` r
+four_wave_countries <- 
+  wvs %>% 
+  count(wave, country) %>% 
+  count(country, sort = TRUE) %>% 
+  filter(n > 3) %>% 
+  pull(country)
+```
 
     ## Using `n` as weighting variable
     ## ℹ Quiet this message with `wt = n` or count rows with `wt = 1`
 
-    png("Select.png", width = 7, height = 5, units = "in", res = 300)
-    wvs %>% 
-      filter(country %in% four_wave_countries) %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ggplot(aes(wave, dem_overall)) + 
-      geom_line(data = world, color = "gray80", size = 1) +
-      geom_line() + 
-      facet_wrap(vars(country)) + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in select countries (1994-2016)",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      ) + 
-      theme_minimal() + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      ) 
+``` r
+#png("Select.png", width = 7, height = 5, units = "in", res = 300)
+wvs %>% 
+  filter(country %in% four_wave_countries) %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ggplot(aes(wave, dem_overall)) + 
+  geom_line(data = world, color = "gray80", size = 1) +
+  geom_line() + 
+  facet_wrap(vars(country)) + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in select countries (1994-2016)",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  ) + 
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  ) 
+```
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
@@ -450,31 +487,36 @@
     ## geom_path: Each group consists of only one observation. Do you need to adjust
     ## the group aesthetic?
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    # wvs %>% 
-    #   filter(country %in% four_wave_countries) %>% 
-    #   group_by(country, region, year, wave) %>% 
-    #   summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-    #   left_join(
-    #     gdp, by = c("country", "year")
-    #   ) %>% 
-    #   ungroup() %>% 
-    #   mutate(country  = fct_reorder(country, year)) %>% 
-    #   ggplot(aes(gdp_pc, dem_overall, color = country)) + 
-    #   geom_line() + 
-    #   geom_point(data = . %>% filter(wave == 3)) + 
-    #   scale_x_log10() 
+``` r
+# wvs %>% 
+#   filter(country %in% four_wave_countries) %>% 
+#   group_by(country, region, year, wave) %>% 
+#   summarize(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+#   left_join(
+#     gdp, by = c("country", "year")
+#   ) %>% 
+#   ungroup() %>% 
+#   mutate(country  = fct_reorder(country, year)) %>% 
+#   ggplot(aes(gdp_pc, dem_overall, color = country)) + 
+#   geom_line() + 
+#   geom_point(data = . %>% filter(wave == 3)) + 
+#   scale_x_log10() 
+```
 
-    wvs_6 <- 
-      wvs %>% 
-      filter(wave == 6) 
+``` r
+wvs_6 <- 
+  wvs %>% 
+  filter(wave == 6) 
 
-    fit_1 <- lm(dem_overall ~ education, data = wvs_6)
-    summary(fit_1)
+fit_1 <- lm(dem_overall ~ education, data = wvs_6)
+summary(fit_1)
+```
 
     ## 
     ## Call:
@@ -500,8 +542,10 @@
     ## Multiple R-squared:  0.003673,   Adjusted R-squared:  0.003613 
     ## F-statistic: 60.67 on 5 and 82274 DF,  p-value: < 2.2e-16
 
-    fit_2 <- lm(dem_overall ~ education + gender + age + employment + income, data = wvs_6)
-    summary(fit_2)
+``` r
+fit_2 <- lm(dem_overall ~ education + gender + age + employment + income, data = wvs_6)
+summary(fit_2)
+```
 
     ## 
     ## Call:
@@ -541,8 +585,10 @@
     ## Multiple R-squared:  0.01077,    Adjusted R-squared:  0.01054 
     ## F-statistic: 46.77 on 18 and 77295 DF,  p-value: < 2.2e-16
 
-    fit_3 <- felm(dem_overall ~  education + gender + age + employment + income | country, data = wvs_6)
-    summary(fit_3)
+``` r
+fit_3 <- felm(dem_overall ~  education + gender + age + employment + income | country, data = wvs_6)
+summary(fit_3)
+```
 
     ## 
     ## Call:
@@ -582,8 +628,10 @@
     ## F-statistic(full model):137.8 on 75 and 77238 DF, p-value: < 2.2e-16 
     ## F-statistic(proj model):  15.3 on 18 and 77238 DF, p-value: < 2.2e-16
 
-    fit_4 <- felm(dem_overall ~  education + gender + age + employment + income | country + year, data = wvs)
-    summary(fit_4)
+``` r
+fit_4 <- felm(dem_overall ~  education + gender + age + employment + income | country + year, data = wvs)
+summary(fit_4)
+```
 
     ## 
     ## Call:
@@ -623,97 +671,103 @@
     ## F-statistic(full model): 5451 on 125 and 236455 DF, p-value: < 2.2e-16 
     ## F-statistic(proj model): 14.26 on 18 and 236455 DF, p-value: < 2.2e-16
 
-    png("education_level.png", width = 7, height = 7, units = "in", res = 300)
+``` r
+#png("education_level.png", width = 7, height = 7, units = "in", res = 300)
 
-    wvs %>% 
-      count(education) %>% 
-      mutate(
-        ranking = 
-          case_when(
-          education == "No formal education"  ~ 1,
-          education == "Incomplete elementary" ~ 2,
-          education == "Complete elementary" ~ 3,
-          education == "Incomplete secondary" ~ 4,
-          education == "Complete secondary" ~ 5,
-          education == "Some higher education"  ~ 6,
-          education == "Higher education"  ~ 7
-        ), 
-        education = fct_reorder(education, ranking)
-      ) %>% 
-      ggplot(aes(education, n)) + 
-      geom_col() + 
-      theme(
-        axis.text.x = element_text(angle = 45, hjust = 1)
-      ) + 
-      labs(
-        x = NULL, 
-        y = "Count", 
-        title = "Respondents' Level of Education", 
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      ) 
+wvs %>% 
+  count(education) %>% 
+  mutate(
+    ranking = 
+      case_when(
+      education == "No formal education"  ~ 1,
+      education == "Incomplete elementary" ~ 2,
+      education == "Complete elementary" ~ 3,
+      education == "Incomplete secondary" ~ 4,
+      education == "Complete secondary" ~ 5,
+      education == "Some higher education"  ~ 6,
+      education == "Higher education"  ~ 7
+    ), 
+    education = fct_reorder(education, ranking)
+  ) %>% 
+  ggplot(aes(education, n)) + 
+  geom_col() + 
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) + 
+  labs(
+    x = NULL, 
+    y = "Count", 
+    title = "Respondents' Level of Education", 
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  ) 
+```
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    png("education_vs_income.png", width = 7, height = 5, units = "in", res = 300)
-    wvs %>% 
-      mutate(
-        ranking = 
-          case_when(
-          income == "Lower class"  ~ 1,
-          income == "Working class" ~ 2,
-          income == "Lower middle class" ~ 3,
-          income == "Upper middle class" ~ 4,
-          income == "Upper class" ~ 5
-        ), 
-        income = fct_reorder(income, ranking)
-      ) %>% 
-      count(education, income) %>% 
-      group_by(income) %>% 
-      mutate(prop = n / sum(n)) %>% 
-      drop_na() %>% 
-      ggplot(aes(education, income, size = prop, color = prop)) + 
-      geom_point() + 
-      scale_color_viridis_c(name = "proportion") + 
-      theme(
-        axis.text.x = element_text(angle = 20, hjust = 1)
-      ) + 
-      labs(
-        x = NULL, 
-        y = NULL, 
-        title = "Income versus levels of education", 
-        caption = "Source: World Values Survey"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      )
-      
-    dev.off()
+``` r
+#png("education_vs_income.png", width = 7, height = 5, units = "in", res = 300)
+wvs %>% 
+  mutate(
+    ranking = 
+      case_when(
+      income == "Lower class"  ~ 1,
+      income == "Working class" ~ 2,
+      income == "Lower middle class" ~ 3,
+      income == "Upper middle class" ~ 4,
+      income == "Upper class" ~ 5
+    ), 
+    income = fct_reorder(income, ranking)
+  ) %>% 
+  count(education, income) %>% 
+  group_by(income) %>% 
+  mutate(prop = n / sum(n)) %>% 
+  drop_na() %>% 
+  ggplot(aes(education, income, size = prop, color = prop)) + 
+  geom_point() + 
+  scale_color_viridis_c(name = "proportion") + 
+  theme(
+    axis.text.x = element_text(angle = 20, hjust = 1)
+  ) + 
+  labs(
+    x = NULL, 
+    y = NULL, 
+    title = "Income versus levels of education", 
+    caption = "Source: World Values Survey"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
 
-    ## quartz_off_screen 
-    ##                 2
+![](data_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
-    wvs %>% 
-      mutate(
-        ranking = 
-          case_when(
-          income == "Lower class"  ~ 1,
-          income == "Working class" ~ 2,
-          income == "Lower middle class" ~ 3,
-          income == "Upper middle class" ~ 4,
-          income == "Upper class" ~ 5
-        ), 
-        income = fct_reorder(income, ranking)
-      ) %>% 
-      count(education, income) %>% 
-      group_by(income) %>% 
-      mutate(prop = n / sum(n)) %>% 
-      arrange(income)
+``` r
+#dev.off()
+
+wvs %>% 
+  mutate(
+    ranking = 
+      case_when(
+      income == "Lower class"  ~ 1,
+      income == "Working class" ~ 2,
+      income == "Lower middle class" ~ 3,
+      income == "Upper middle class" ~ 4,
+      income == "Upper class" ~ 5
+    ), 
+    income = fct_reorder(income, ranking)
+  ) %>% 
+  count(education, income) %>% 
+  group_by(income) %>% 
+  mutate(prop = n / sum(n)) %>% 
+  arrange(income)
+```
 
     ## # A tibble: 42 x 4
     ## # Groups:   income [6]
@@ -731,223 +785,252 @@
     ## 10 Incomplete secondary  Working class 14087 0.153 
     ## # … with 32 more rows
 
-    png("age_hist.png", width = 7, height = 5, units = "in", res = 300)
-    wvs %>% 
-      ggplot(aes(age)) + 
-      geom_histogram(bins = 20) + 
-      labs(
-        x = "Age", 
-        y = "Count", 
-        title = "Histogram of Respondents' Age"
-      ) + 
-      theme(
-        plot.title = element_text(hjust = 0.5, face = "bold")
-      )
+``` r
+#png("age_hist.png", width = 7, height = 5, units = "in", res = 300)
+wvs %>% 
+  ggplot(aes(age)) + 
+  geom_histogram(bins = 20) + 
+  labs(
+    x = "Age", 
+    y = "Count", 
+    title = "Histogram of Respondents' Age"
+  ) + 
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )
+```
 
     ## Warning: Removed 3830 rows containing non-finite values (stat_bin).
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    png("south_asia.png", width = 7, height = 5, units = "in", res = 300)
+``` r
+#png("south_asia.png", width = 7, height = 5, units = "in", res = 300)
 
-    wvs %>% 
-      filter(region == "South Asia") %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ggplot(aes(wave, dem_overall, color = country)) + 
-      geom_line() + 
-      geom_point(size = 2) + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in South Asia (1994-2016) by Country",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      )
-
-    ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
-
-    dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
-
-    png("n_america.png", width = 7, height = 5, units = "in", res = 300)
-
-    wvs %>% 
-      filter(region == "North America") %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ungroup() %>% 
-      mutate(wave = as.factor(wave)) %>% 
-      ggplot(aes(wave, dem_overall)) + 
-        geom_line(
-        data = world %>% mutate(wave = as.factor(wave)), 
-        color = "gray80", 
-        size = 1, 
-        aes(group = 1)) +
-      geom_line(aes(group = country, color = country)) +
-      geom_point(aes(color = country, group = country), size = 2) + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in North America (1994-2016) by Country",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      )
+wvs %>% 
+  filter(region == "South Asia") %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ggplot(aes(wave, dem_overall, color = country)) + 
+  geom_line() + 
+  geom_point(size = 2) + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in South Asia (1994-2016) by Country",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  )
+```
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    png("Latin_america.png", width = 7, height = 5, units = "in", res = 300)
+``` r
+#png("n_america.png", width = 7, height = 5, units = "in", res = 300)
 
-    wvs %>% 
-      filter(region == "Latin America & Caribbean") %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ungroup() %>% 
-      mutate(wave = as.factor(wave)) %>% 
-      ggplot(aes(wave, dem_overall, color = country, group = country)) + 
-      geom_line() + 
-      geom_point(size = 2) + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in Latin America (1994-2016) by Country",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      )
-
-    ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
-
-    dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
-
-    png("E_asia.png", width = 7, height = 5, units = "in", res = 300)
-
-    wvs %>% 
-      filter(region == "East Asia & Pacific") %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ungroup() %>% 
-      mutate(wave = as.factor(wave)) %>% 
-      ggplot(aes(wave, dem_overall, color = country, group = country)) + 
-      geom_line() + 
-      geom_point(size = 2) + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in East Asia & Pacific (1994-2016) by Country",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      )
+wvs %>% 
+  filter(region == "North America") %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(wave = as.factor(wave)) %>% 
+  ggplot(aes(wave, dem_overall)) + 
+    geom_line(
+    data = world %>% mutate(wave = as.factor(wave)), 
+    color = "gray80", 
+    size = 1, 
+    aes(group = 1)) +
+  geom_line(aes(group = country, color = country)) +
+  geom_point(aes(color = country, group = country), size = 2) + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in North America (1994-2016) by Country",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  )
+```
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    png("Africa.png", width = 7, height = 5, units = "in", res = 300)
+``` r
+#png("Latin_america.png", width = 7, height = 5, units = "in", res = 300)
 
-    wvs %>% 
-      filter(region == "Sub-Saharan Africa") %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ungroup() %>% 
-      mutate(wave = as.factor(wave)) %>% 
-      ggplot(aes(wave, dem_overall, color = country, group = country)) + 
-      geom_line() + 
-      geom_point(size = 2) + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in Sub-Saharan Africa (1994-2016) by Country",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      )
+wvs %>% 
+  filter(region == "Latin America & Caribbean") %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(wave = as.factor(wave)) %>% 
+  ggplot(aes(wave, dem_overall, color = country, group = country)) + 
+  geom_line() + 
+  geom_point(size = 2) + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in Latin America (1994-2016) by Country",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  )
+```
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
+
+``` r
+#png("E_asia.png", width = 7, height = 5, units = "in", res = 300)
+
+wvs %>% 
+  filter(region == "East Asia & Pacific") %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(wave = as.factor(wave)) %>% 
+  ggplot(aes(wave, dem_overall, color = country, group = country)) + 
+  geom_line() + 
+  geom_point(size = 2) + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in East Asia & Pacific (1994-2016) by Country",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  )
+```
+
+    ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
+
+![](data_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+``` r
+#dev.off()
+```
+
+``` r
+#png("Africa.png", width = 7, height = 5, units = "in", res = 300)
+
+wvs %>% 
+  filter(region == "Sub-Saharan Africa") %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(wave = as.factor(wave)) %>% 
+  ggplot(aes(wave, dem_overall, color = country, group = country)) + 
+  geom_line() + 
+  geom_point(size = 2) + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in Sub-Saharan Africa (1994-2016) by Country",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  )
+```
+
+    ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
+
+![](data_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+``` r
+#dev.off()
+```
 
 \#\#\#India
 
-    wvs %>% 
-      filter(country == "India") %>% 
-      mutate(wave = as.factor(wave)) %>% 
-      ggplot(aes(education, dem_overall, color = wave)) + 
-      geom_count()
+``` r
+wvs %>% 
+  filter(country == "India") %>% 
+  mutate(wave = as.factor(wave)) %>% 
+  ggplot(aes(education, dem_overall, color = wave)) + 
+  geom_count()
+```
 
-![](data_analysis_files/figure-markdown_strict/unnamed-chunk-21-1.png)
+![](data_analysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
-    wvs %>% 
-      filter(country == "India") %>%
-      mutate(wave = as.factor(wave)) %>% 
-      group_by(wave, income) %>% 
-      summarize(dem_overall = mean(dem_overall)) %>% 
-      ggplot(aes(dem_overall, income, color = wave)) + 
-      geom_point()
+``` r
+wvs %>% 
+  filter(country == "India") %>%
+  mutate(wave = as.factor(wave)) %>% 
+  group_by(wave, income) %>% 
+  summarize(dem_overall = mean(dem_overall)) %>% 
+  ggplot(aes(dem_overall, income, color = wave)) + 
+  geom_point()
+```
 
     ## `summarise()` regrouping output by 'wave' (override with `.groups` argument)
 
-![](data_analysis_files/figure-markdown_strict/unnamed-chunk-21-2.png)
+![](data_analysis_files/figure-gfm/unnamed-chunk-21-2.png)<!-- -->
 
-    png("MENA.png", width = 7, height = 5, units = "in", res = 300)
+``` r
+#png("MENA.png", width = 7, height = 5, units = "in", res = 300)
 
-    wvs %>% 
-      filter(region == "Middle East & North Africa") %>% 
-      group_by(wave, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ungroup() %>% 
-      mutate(wave = as.factor(wave)) %>% 
-      ggplot(aes(wave, dem_overall)) + 
-      geom_line(aes(group = country, color = country)) +
-      geom_point(aes(color = country, group = country), size = 2) + 
-      labs(
-        x = "Wave", 
-        y = "Score", 
-        title = "Attitudes towards Democracy in MENA (1994-2016) by Country",
-        subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
-        caption = "Source: World Values Survey"
-      )
+wvs %>% 
+  filter(region == "Middle East & North Africa") %>% 
+  group_by(wave, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(wave = as.factor(wave)) %>% 
+  ggplot(aes(wave, dem_overall)) + 
+  geom_line(aes(group = country, color = country)) +
+  geom_point(aes(color = country, group = country), size = 2) + 
+  labs(
+    x = "Wave", 
+    y = "Score", 
+    title = "Attitudes towards Democracy in MENA (1994-2016) by Country",
+    subtitle = "Higher scores indicate more pro-democratic views on a scale of -1 to 1",
+    caption = "Source: World Values Survey"
+  )
+```
 
     ## `summarise()` regrouping output by 'wave', 'country' (override with `.groups` argument)
 
-    dev.off()
+![](data_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
-    ## quartz_off_screen 
-    ##                 2
+``` r
+#dev.off()
+```
 
-    wvs %>% 
-      # filter(year %in% 2003:2012) %>% 
-      group_by(year, country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      ggplot(aes(year, dem_overall)) + 
-      geom_point()
+``` r
+wvs %>% 
+  # filter(year %in% 2003:2012) %>% 
+  group_by(year, country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  ggplot(aes(year, dem_overall)) + 
+  geom_point()
+```
 
     ## `summarise()` regrouping output by 'year', 'country' (override with `.groups` argument)
 
-![](data_analysis_files/figure-markdown_strict/unnamed-chunk-23-1.png)
+![](data_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
-    wvs %>% 
-      filter(wave == 6) %>% 
-      group_by(country, region) %>% 
-      summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
-      arrange(dem_overall)
+``` r
+wvs %>% 
+  filter(wave == 6) %>% 
+  group_by(country, region) %>% 
+  summarise(dem_overall = weighted.mean(dem_overall, w = weight, na.rm = TRUE)) %>% 
+  arrange(dem_overall)
+```
 
     ## `summarise()` regrouping output by 'country' (override with `.groups` argument)
 
